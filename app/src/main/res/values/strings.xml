@@ -1,3 +1,13 @@
 <resources>
-    <string name="app_name">IkonxIkonicsTasker</string>
+    <string name="app_name">FoodTasker</string>
+    <string name="facebook_app_id">826934180991763</string>
+    <string name="fb_login_protocol_scheme">fb826934180991763</string>
+
+    <string name="API_URL">http://192.168.1.107:8000/api</string>
+    <string name="CLIENT_ID">zs2yKrfXOcTpzf6hS6oXPjQbsj1SGViDstmmdIfi</string>
+    <string name="CLIENT_SECRET">DyTgoVsF0X6atjYL0AIOaW1FNbr35GzXofPGv5NIE9MrEo26wlSudKc7GjfAEYI7MErNMmBWaTHCTzjndqf1ZnNSZ01HEAmpjgNXrVLDUYkCM55ZgtByf0ARZLIozLEC</string>md
+    <string name="title_activity_customer_main">CustomerMainActivity</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
