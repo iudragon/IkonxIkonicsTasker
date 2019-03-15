@@ -1,4 +1,4 @@
-package dragon.bakuman.iu.ikonxikonicstasker;
+package dragon.bakuman.iu.ikonxikonicstasker.Adapters;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -12,6 +12,10 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+
+import dragon.bakuman.iu.ikonxikonicstasker.Activities.MealListActivity;
+import dragon.bakuman.iu.ikonxikonicstasker.Objects.Restaurant;
+import dragon.bakuman.iu.ikonxikonicstasker.R;
 
 public class RestaurantAdapter extends BaseAdapter {
 

@@ -1,4 +1,4 @@
-package dragon.bakuman.iu.ikonxikonicstasker;
+package dragon.bakuman.iu.ikonxikonicstasker.Fragments;
 
 
 import android.os.Bundle;
@@ -27,6 +27,10 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import dragon.bakuman.iu.ikonxikonicstasker.R;
+import dragon.bakuman.iu.ikonxikonicstasker.Objects.Restaurant;
+import dragon.bakuman.iu.ikonxikonicstasker.Adapters.RestaurantAdapter;
 
 
 /**

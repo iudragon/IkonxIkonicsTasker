@@ -1,4 +1,4 @@
-package dragon.bakuman.iu.ikonxikonicstasker;
+package dragon.bakuman.iu.ikonxikonicstasker.Fragments;
 
 
 import android.content.Intent;
@@ -11,6 +11,9 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
+
+import dragon.bakuman.iu.ikonxikonicstasker.Activities.MealListActivity;
+import dragon.bakuman.iu.ikonxikonicstasker.R;
 
 
 /**

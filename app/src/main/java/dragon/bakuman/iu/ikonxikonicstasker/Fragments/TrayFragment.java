@@ -1,6 +1,7 @@
-package dragon.bakuman.iu.ikonxikonicstasker;
+package dragon.bakuman.iu.ikonxikonicstasker.Fragments;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -8,16 +9,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ListView;
+
+import dragon.bakuman.iu.ikonxikonicstasker.Activities.PaymentActivity;
+import dragon.bakuman.iu.ikonxikonicstasker.R;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class OrderFragment extends Fragment {
+public class TrayFragment extends Fragment {
 
 
-    public OrderFragment() {
+    public TrayFragment() {
         // Required empty public constructor
     }
 
@@ -26,7 +31,7 @@ public class OrderFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_order, container, false);
+        return inflater.inflate(R.layout.fragment_tray, container, false);
     }
 
     @Override
@@ -55,6 +60,14 @@ public class OrderFragment extends Fragment {
                 return LayoutInflater.from(getActivity()).inflate(R.layout.list_item_tray, null);
             }
         });
-    }
 
+        Button buttonAddPayment = getActivity().findViewById(R.id.button_add_payment);
+        buttonAddPayment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), PaymentActivity.class);
+                startActivity(intent);
+            }
+        });
+    }
 }

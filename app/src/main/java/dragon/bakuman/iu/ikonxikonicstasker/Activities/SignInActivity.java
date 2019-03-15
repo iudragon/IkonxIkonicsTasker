@@ -1,4 +1,4 @@
-package dragon.bakuman.iu.ikonxikonicstasker;
+package dragon.bakuman.iu.ikonxikonicstasker.Activities;
 
 import android.content.Context;
 import android.content.Intent;
@@ -29,6 +29,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Arrays;
+
+import dragon.bakuman.iu.ikonxikonicstasker.R;
 
 public class SignInActivity extends AppCompatActivity {
 

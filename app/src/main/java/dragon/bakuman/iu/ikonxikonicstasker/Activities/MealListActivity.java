@@ -1,4 +1,4 @@
-package dragon.bakuman.iu.ikonxikonicstasker;
+package dragon.bakuman.iu.ikonxikonicstasker.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,13 +10,20 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 
+import dragon.bakuman.iu.ikonxikonicstasker.R;
+
 public class MealListActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_meal_list);
-        getSupportActionBar().setTitle("Agradoot Name");
+
+        Intent intent = getIntent();
+        String restaurantId = intent.getStringExtra("restaurantId");
+        String restaurantName = intent.getStringExtra("restaurantName");
+
+        getSupportActionBar().setTitle(restaurantName);
 
         ListView listView = findViewById(R.id.meal_list);
         listView.setAdapter(new BaseAdapter() {

@@ -1,4 +1,4 @@
-package dragon.bakuman.iu.ikonxikonicstasker;
+package dragon.bakuman.iu.ikonxikonicstasker.Fragments;
 
 
 import android.os.Bundle;
@@ -15,6 +15,8 @@ import com.github.mikephil.charting.data.BarEntry;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import dragon.bakuman.iu.ikonxikonicstasker.R;
 
 
 /**

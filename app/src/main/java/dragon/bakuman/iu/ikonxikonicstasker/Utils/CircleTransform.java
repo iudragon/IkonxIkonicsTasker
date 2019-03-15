@@ -1,4 +1,4 @@
-package dragon.bakuman.iu.ikonxikonicstasker;
+package dragon.bakuman.iu.ikonxikonicstasker.Utils;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapShader;

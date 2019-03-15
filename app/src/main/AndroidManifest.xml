@@ -9,18 +9,18 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".DriverMainActivity"></activity>
+        <activity android:name=".Activities.DriverMainActivity"></activity>
         <activity
-            android:name=".PaymentActivity"
-            android:parentActivityName=".CustomerMainActivity"
+            android:name=".Activities.PaymentActivity"
+            android:parentActivityName=".Activities.CustomerMainActivity"
             android:theme="@style/AppTheme.ActionBar" />
         <activity
-            android:name=".MealDetailActivity"
-            android:parentActivityName=".MealListActivity"
+            android:name=".Activities.MealDetailActivity"
+            android:parentActivityName=".Activities.MealListActivity"
             android:theme="@style/AppTheme.ActionBar" />
         <activity
-            android:name=".MealListActivity"
-            android:parentActivityName=".CustomerMainActivity"
+            android:name=".Activities.MealListActivity"
+            android:parentActivityName=".Activities.CustomerMainActivity"
             android:theme="@style/AppTheme.ActionBar" />
 
         <meta-data
@@ -47,9 +47,9 @@
 
 
         <activity
-            android:name=".CustomerMainActivity"
+            android:name=".Activities.CustomerMainActivity"
             android:launchMode="singleTop" />
-        <activity android:name=".SignInActivity">
+        <activity android:name=".Activities.SignInActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

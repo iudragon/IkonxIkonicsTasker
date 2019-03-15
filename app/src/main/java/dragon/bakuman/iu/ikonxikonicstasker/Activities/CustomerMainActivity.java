@@ -1,4 +1,4 @@
-package dragon.bakuman.iu.ikonxikonicstasker;
+package dragon.bakuman.iu.ikonxikonicstasker.Activities;
 
 import android.content.Context;
 import android.content.Intent;
@@ -29,16 +29,22 @@ import com.squareup.picasso.Picasso;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DriverMainActivity extends AppCompatActivity {
+import dragon.bakuman.iu.ikonxikonicstasker.Utils.CircleTransform;
+import dragon.bakuman.iu.ikonxikonicstasker.Fragments.OrderFragment;
+import dragon.bakuman.iu.ikonxikonicstasker.R;
+import dragon.bakuman.iu.ikonxikonicstasker.Fragments.RestaurantListFragment;
+import dragon.bakuman.iu.ikonxikonicstasker.Fragments.TrayFragment;
 
+public class CustomerMainActivity extends AppCompatActivity {
 
     private DrawerLayout mDrawerLayout;
+
     private SharedPreferences sharedPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_driver_main);
+        setContentView(R.layout.activity_customer_main);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -47,7 +53,7 @@ public class DriverMainActivity extends AppCompatActivity {
         actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-        mDrawerLayout = findViewById(R.id.drawer_layout_driver);
+        mDrawerLayout = findViewById(R.id.drawer_layout);
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(
@@ -63,16 +69,14 @@ public class DriverMainActivity extends AppCompatActivity {
 
                         int id = menuItem.getItemId();
                         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                        if (id == R.id.nav_orders){
+                        if (id == R.id.nav_restaurant){
 
-                            transaction.replace(R.id.content_frame, new OrderListFragment()).commit();
-                        } else if (id == R.id.nav_delivery){
+                            transaction.replace(R.id.content_frame, new RestaurantListFragment()).commit();
+                        } else if (id == R.id.nav_tray){
+                            transaction.replace(R.id.content_frame, new TrayFragment()).commit();
 
-                            transaction.replace(R.id.content_frame, new DeliveryFragment()).commit();
-
-
-                        } else if (id == R.id.nav_statistic){
-                            transaction.replace(R.id.content_frame, new StatisticFragment()).commit();
+                        } else if (id == R.id.nav_order){
+                            transaction.replace(R.id.content_frame, new OrderFragment()).commit();
 
 
                         } else if (id == R.id.nav_logout){
@@ -82,7 +86,6 @@ public class DriverMainActivity extends AppCompatActivity {
                             editor.remove("token");
                             editor.apply();
 
-
                             finishAffinity();
                             Intent intent = new Intent(getApplicationContext(), SignInActivity.class);
                             startActivity(intent);
@@ -90,12 +93,14 @@ public class DriverMainActivity extends AppCompatActivity {
 
                         }
 
+
                         return true;
                     }
                 });
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.content_frame, new OrderListFragment()).commit();
+
+        transaction.replace(R.id.content_frame, new RestaurantListFragment()).commit();
 
         sharedPref = getSharedPreferences("MY_KEY", Context.MODE_PRIVATE);
 
@@ -107,7 +112,7 @@ public class DriverMainActivity extends AppCompatActivity {
         Picasso.with(this).load(sharedPref.getString("avatar", "")).transform(new CircleTransform()).into(customer_avatar);
 
 
-    }
+        }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -119,11 +124,9 @@ public class DriverMainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-
     @Override
     public void onBackPressed() {
     }
-
 
     private void logoutToServer(final String token){
 
@@ -147,7 +150,7 @@ public class DriverMainActivity extends AppCompatActivity {
                         // TODO: Handle error
 
                     }
-                }){
+                 }){
 
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
@@ -168,3 +171,4 @@ public class DriverMainActivity extends AppCompatActivity {
     }
 
 }
+
