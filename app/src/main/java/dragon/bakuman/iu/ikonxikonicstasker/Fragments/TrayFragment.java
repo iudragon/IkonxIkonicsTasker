@@ -15,9 +15,11 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import dragon.bakuman.iu.ikonxikonicstasker.Activities.PaymentActivity;
+import dragon.bakuman.iu.ikonxikonicstasker.Adapters.TrayAdapter;
 import dragon.bakuman.iu.ikonxikonicstasker.AppDatabase;
 import dragon.bakuman.iu.ikonxikonicstasker.Objects.Tray;
 import dragon.bakuman.iu.ikonxikonicstasker.R;
@@ -29,7 +31,8 @@ import dragon.bakuman.iu.ikonxikonicstasker.R;
 public class TrayFragment extends Fragment {
 
     private AppDatabase db;
-
+    private ArrayList<Tray> trayList;
+    private TrayAdapter adapter;
 
     public TrayFragment() {
         // Required empty public constructor
@@ -50,28 +53,11 @@ public class TrayFragment extends Fragment {
         db = AppDatabase.getAppDatabase(getContext());
         listTray();
 
+        trayList = new ArrayList<>();
+        adapter = new TrayAdapter(this.getActivity(), trayList);
+
         ListView listView = getActivity().findViewById(R.id.tray_list);
-        listView.setAdapter(new BaseAdapter() {
-            @Override
-            public int getCount() {
-                return 4;
-            }
-
-            @Override
-            public Object getItem(int position) {
-                return null;
-            }
-
-            @Override
-            public long getItemId(int position) {
-                return 0;
-            }
-
-            @Override
-            public View getView(int position, View convertView, ViewGroup parent) {
-                return LayoutInflater.from(getActivity()).inflate(R.layout.list_item_tray, null);
-            }
-        });
+        listView.setAdapter(adapter);
 
         Button buttonAddPayment = getActivity().findViewById(R.id.button_add_payment);
         buttonAddPayment.setOnClickListener(new View.OnClickListener() {
@@ -84,9 +70,9 @@ public class TrayFragment extends Fragment {
     }
 
     @SuppressLint("StaticFieldLeak")
-    private void listTray(){
+    private void listTray() {
 
-        new AsyncTask<Void, Void, List<Tray>>(){
+        new AsyncTask<Void, Void, List<Tray>>() {
 
             @Override
             protected List<Tray> doInBackground(Void... voids) {
@@ -96,9 +82,10 @@ public class TrayFragment extends Fragment {
             @Override
             protected void onPostExecute(List<Tray> trays) {
                 super.onPostExecute(trays);
-                for (Tray tray : trays){
-
-                    Log.d("TRAY", tray.getMealName() + " - " + tray.getMealQuantity());
+                if (!trays.isEmpty()) {
+                    trayList.clear();
+                    trayList.addAll(trays);
+                    adapter.notifyDataSetChanged();
                 }
             }
         }.execute();
