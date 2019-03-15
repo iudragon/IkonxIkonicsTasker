@@ -28,6 +28,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import dragon.bakuman.iu.ikonxikonicstasker.Utils.CircleTransform;
 import dragon.bakuman.iu.ikonxikonicstasker.Fragments.OrderFragment;
@@ -98,9 +99,19 @@ public class CustomerMainActivity extends AppCompatActivity {
                     }
                 });
 
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
-        transaction.replace(R.id.content_frame, new RestaurantListFragment()).commit();
+        Intent intent = getIntent();
+        String screen = intent.getStringExtra("screen");
+
+        if (Objects.equals(screen, "tray")){
+
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.content_frame, new TrayFragment()).commit();
+
+        } else {
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.content_frame, new RestaurantListFragment()).commit();
+        }
 
         sharedPref = getSharedPreferences("MY_KEY", Context.MODE_PRIVATE);
 

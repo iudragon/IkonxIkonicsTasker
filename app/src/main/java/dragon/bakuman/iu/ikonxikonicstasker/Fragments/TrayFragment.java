@@ -1,10 +1,13 @@
 package dragon.bakuman.iu.ikonxikonicstasker.Fragments;
 
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +15,11 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 
+import java.util.List;
+
 import dragon.bakuman.iu.ikonxikonicstasker.Activities.PaymentActivity;
+import dragon.bakuman.iu.ikonxikonicstasker.AppDatabase;
+import dragon.bakuman.iu.ikonxikonicstasker.Objects.Tray;
 import dragon.bakuman.iu.ikonxikonicstasker.R;
 
 
@@ -20,6 +27,8 @@ import dragon.bakuman.iu.ikonxikonicstasker.R;
  * A simple {@link Fragment} subclass.
  */
 public class TrayFragment extends Fragment {
+
+    private AppDatabase db;
 
 
     public TrayFragment() {
@@ -37,6 +46,9 @@ public class TrayFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+        db = AppDatabase.getAppDatabase(getContext());
+        listTray();
 
         ListView listView = getActivity().findViewById(R.id.tray_list);
         listView.setAdapter(new BaseAdapter() {
@@ -69,5 +81,26 @@ public class TrayFragment extends Fragment {
                 startActivity(intent);
             }
         });
+    }
+
+    @SuppressLint("StaticFieldLeak")
+    private void listTray(){
+
+        new AsyncTask<Void, Void, List<Tray>>(){
+
+            @Override
+            protected List<Tray> doInBackground(Void... voids) {
+                return db.trayDao().getAll();
+            }
+
+            @Override
+            protected void onPostExecute(List<Tray> trays) {
+                super.onPostExecute(trays);
+                for (Tray tray : trays){
+
+                    Log.d("TRAY", tray.getMealName() + " - " + tray.getMealQuantity());
+                }
+            }
+        }.execute();
     }
 }
