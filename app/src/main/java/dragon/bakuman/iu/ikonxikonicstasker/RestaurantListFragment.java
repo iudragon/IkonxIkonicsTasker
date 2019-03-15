@@ -4,10 +4,13 @@ package dragon.bakuman.iu.ikonxikonicstasker;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ListView;
 
 import com.android.volley.Request;
@@ -60,6 +63,8 @@ public class RestaurantListFragment extends Fragment {
         restaurantListView.setAdapter(adapter);
 
         getRestaurants();
+
+        addSearchFunction();
     }
 
     private void getRestaurants() {
@@ -76,9 +81,9 @@ public class RestaurantListFragment extends Fragment {
                         Log.d("RESTAURANT LIST", response.toString());
                         JSONArray restaurantsJSONArray = null;
 
-                        try{
+                        try {
                             restaurantsJSONArray = response.getJSONArray("registrations");
-                        } catch (JSONException e){
+                        } catch (JSONException e) {
                             e.printStackTrace();
                         }
 
@@ -101,4 +106,38 @@ public class RestaurantListFragment extends Fragment {
         RequestQueue queue = Volley.newRequestQueue(getActivity());
         queue.add(jsonObjectRequest);
     }
+
+    private void addSearchFunction() {
+
+        EditText searchInput = getActivity().findViewById(R.id.res_search);
+
+        searchInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
+
+                Log.d("SEARCH", charSequence.toString());
+
+                restaurantArrayList.clear();
+
+                for (Restaurant restaurant : restaurants) {
+                    if (restaurant.getName().toLowerCase().contains(charSequence.toString().toLowerCase())){
+
+                        restaurantArrayList.add(restaurant);
+                    }
+                }
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+    }
+
 }
