@@ -108,7 +108,15 @@ public class CustomerMainActivity extends AppCompatActivity {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.content_frame, new TrayFragment()).commit();
 
-        } else {
+        } else if (Objects.equals(screen, "order")){
+
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.content_frame, new OrderFragment()).commit();
+
+        }
+
+
+        else {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.content_frame, new RestaurantListFragment()).commit();
         }

@@ -40,9 +40,11 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import dragon.bakuman.iu.ikonxikonicstasker.Activities.PaymentActivity;
@@ -94,14 +96,6 @@ public class TrayFragment extends Fragment implements OnMapReadyCallback {
         ListView listView = getActivity().findViewById(R.id.tray_list);
         listView.setAdapter(adapter);
 
-        Button buttonAddPayment = getActivity().findViewById(R.id.button_add_payment);
-        buttonAddPayment.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getContext(), PaymentActivity.class);
-                startActivity(intent);
-            }
-        });
 
         // Construct a FusedLocationProviderClient.
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
@@ -113,6 +107,8 @@ public class TrayFragment extends Fragment implements OnMapReadyCallback {
         address = getActivity().findViewById(R.id.tray_address);
 
         handleMapAddress();
+
+        handleAddPayment();
 
     }
 
@@ -290,6 +286,38 @@ public class TrayFragment extends Fragment implements OnMapReadyCallback {
                 }
 
                 return false;
+            }
+        });
+    }
+
+    private void handleAddPayment(){
+
+        Button buttonAddPayment = getActivity().findViewById(R.id.button_add_payment);
+        buttonAddPayment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (address.getText().toString().equals("")){
+                    address.setError("Address cannot be blank");
+                } else {
+                    Intent intent = new Intent(getContext(), PaymentActivity.class);
+
+                    intent.putExtra("restaurantId", trayList.get(0).getRestaurantId());
+                    intent.putExtra("address", address.getText().toString());
+
+                    ArrayList<HashMap<String, Integer>> orderDetails = new ArrayList<HashMap<String, Integer>>();
+                    for (Tray tray : trayList){
+
+                        HashMap<String, Integer> map = new HashMap<>();
+                        map.put("meal_id", Integer.parseInt(tray.getMealId()));
+                        map.put("quantity", tray.getMealQuantity());
+                        orderDetails.add(map);
+
+                    }
+
+                    intent.putExtra("orderDetails", new Gson().toJson(orderDetails));
+
+                    startActivity(intent);
+                }
             }
         });
     }
