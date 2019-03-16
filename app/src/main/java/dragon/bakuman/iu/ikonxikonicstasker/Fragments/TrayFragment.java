@@ -5,6 +5,8 @@ import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -15,11 +17,14 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TableLayout;
@@ -36,6 +41,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,6 +66,8 @@ public class TrayFragment extends Fragment implements OnMapReadyCallback {
     private GoogleMap mMap;
     private Location mLastKnownLocation;
     private static final int DEFAULT_ZOOM = 15;
+
+    private EditText address;
 
     public TrayFragment() {
         // Required empty public constructor
@@ -102,6 +110,9 @@ public class TrayFragment extends Fragment implements OnMapReadyCallback {
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.tray_map);
         mapFragment.getMapAsync(this);
 
+        address = getActivity().findViewById(R.id.tray_address);
+
+        handleMapAddress();
 
     }
 
@@ -219,6 +230,23 @@ public class TrayFragment extends Fragment implements OnMapReadyCallback {
                                 mMap.addMarker(new MarkerOptions().position(
                                         new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude())
                                 ));
+
+                                Geocoder coder = new Geocoder(getActivity());
+                                try {
+
+                                    ArrayList<Address> addresses =(ArrayList<Address>) coder.getFromLocation(
+                                            mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude(), 1
+                                    );
+
+                                    if (!addresses.isEmpty()){
+
+                                        address.setText(addresses.get(0).getAddressLine(0));
+                                    }
+
+                                } catch (IOException e) {
+
+                                    e.printStackTrace();
+                                }
                             }
                         }
                     }
@@ -229,5 +257,41 @@ public class TrayFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
+    private void handleMapAddress(){
+
+        address.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent event) {
+                if (i == EditorInfo.IME_ACTION_DONE){
+
+                    Geocoder coder = new Geocoder(getActivity());
+                    try{
+
+                        ArrayList<Address> addresses = (ArrayList<Address>) coder.getFromLocationName(textView.getText().toString(), 1);
+
+                        if (!addresses.isEmpty()){
+
+                            double lat = addresses.get(0).getLatitude();
+                            double lng = addresses.get(0).getLongitude();
+
+                            LatLng pos = new LatLng(lat, lng);
+                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pos, DEFAULT_ZOOM));
+                            mMap.clear();
+                            mMap.addMarker(new MarkerOptions().position(pos));
+
+
+
+                        }
+
+                    } catch (IOException e){
+
+                        e.printStackTrace();
+                    }
+                }
+
+                return false;
+            }
+        });
+    }
 
 }
