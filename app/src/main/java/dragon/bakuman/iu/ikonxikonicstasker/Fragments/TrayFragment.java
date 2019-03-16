@@ -147,8 +147,8 @@ public class TrayFragment extends Fragment implements OnMapReadyCallback {
                     alertText.setGravity(Gravity.CENTER);
                     alertText.setLayoutParams(
                             new TableLayout.LayoutParams(
-                                    ActionBar.LayoutParams.WRAP_CONTENT,
-                                    ActionBar.LayoutParams.WRAP_CONTENT));
+                                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                                    ViewGroup.LayoutParams.WRAP_CONTENT, 1));
 
                     LinearLayout linearLayout = getActivity().findViewById(R.id.tray_layout);
                     linearLayout.removeAllViews();
