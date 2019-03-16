@@ -159,7 +159,7 @@ public class PaymentActivity extends AppCompatActivity {
                 Map<String, String> params = new HashMap<String, String>();
 
                 params.put("access_token", sharedPref.getString("token", ""));
-                params.put("restaurant_id", restaurantId);
+                params.put("registration_id", restaurantId);
                 params.put("address", address);
                 params.put("order_details", orderDetails);
                 params.put("stripe_token", stripeToken);

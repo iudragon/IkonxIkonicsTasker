@@ -21,7 +21,7 @@ public class Tray {
     @ColumnInfo(name = "meal_quantity")
     private int mealQuantity;
 
-    @ColumnInfo(name = "restaurant_id")
+    @ColumnInfo(name = "registration_id")
     private String restaurantId;
 
     public int getId() {
