@@ -32,8 +32,12 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -41,8 +45,12 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import dragon.bakuman.iu.ikonxikonicstasker.Adapters.TrayAdapter;
+import dragon.bakuman.iu.ikonxikonicstasker.Objects.Restaurant;
 import dragon.bakuman.iu.ikonxikonicstasker.Objects.Tray;
 import dragon.bakuman.iu.ikonxikonicstasker.R;
 
@@ -56,6 +64,10 @@ public class OrderFragment extends Fragment implements OnMapReadyCallback {
     private TrayAdapter adapter;
     private Button statusView;
     private GoogleMap mMap;
+    private Timer timer = new Timer();
+    private Marker driverMarker;
+    private static final int DEFAULT_ZOOM = 15;
+
 
     public OrderFragment() {
         // Required empty public constructor
@@ -86,8 +98,63 @@ public class OrderFragment extends Fragment implements OnMapReadyCallback {
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.order_map);
         mapFragment.getMapAsync(this);
 
+        getDriverLocation();
+
     }
 
+
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+
+        mMap = googleMap;
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+
+                getDriverLocation();
+            }
+        };
+
+        timer.scheduleAtFixedRate(task, 0, 2000);
+
+    }
+
+    private void drawRouteOnMap(JSONObject response){
+
+        try{
+
+            String restaurantAddress = response.getJSONObject("order").getJSONObject("registration").getString("address");
+            String orderAddress = response.getJSONObject("order").getString("address");
+
+            Geocoder coder = new Geocoder(getActivity());
+            ArrayList<Address> resAddresses = (ArrayList<Address>) coder.getFromLocationName(restaurantAddress, 1);
+            ArrayList<Address> ordAddresses = (ArrayList<Address>) coder.getFromLocationName(orderAddress, 1);
+
+            if (!resAddresses.isEmpty() && !ordAddresses.isEmpty()){
+
+                LatLng restaurantPos = new LatLng(resAddresses.get(0).getLatitude(), resAddresses.get(0).getLongitude());
+                LatLng orderPos = new LatLng(ordAddresses.get(0).getLatitude(), ordAddresses.get(0).getLongitude());
+
+                DrawRouteMaps.getInstance(getActivity(), "AIzaSyDqxXl466uV1ZlzMo7Z5RVmQJe--KL_D_o").draw(restaurantPos, orderPos, mMap);
+                DrawMarker.getInstance(getActivity()).draw(mMap, restaurantPos, R.drawable.pin_restaurant, "Restaurant Location");
+                DrawMarker.getInstance(getActivity()).draw(mMap, orderPos, R.drawable.pin_customer, "Customer Location");
+
+                LatLngBounds bounds = new LatLngBounds.Builder()
+                        .include(restaurantPos)
+                        .include(orderPos).build();
+                Point displaySize = new Point();
+                getActivity().getWindowManager().getDefaultDisplay().getSize(displaySize);
+                mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, displaySize.x, 250, 30));
+            }
+
+
+
+        } catch (JSONException | IOException e){
+
+            e.printStackTrace();
+        }
+    }
 
     private void getLatestOrder() {
 
@@ -175,45 +242,67 @@ public class OrderFragment extends Fragment implements OnMapReadyCallback {
 
     }
 
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
+    private void getDriverLocation(){
 
-        mMap = googleMap;
+        SharedPreferences sharedPref = getActivity().getSharedPreferences("MY_KEY", Context.MODE_PRIVATE);
+
+        String url = getString(R.string.API_URL) + "/customer/driver/location?access_token=" + sharedPref.getString("token", "");
+
+
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                Request.Method.GET,
+                url,
+                null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+
+                        Log.d("DRIVER LOCATION", response.toString());
+                        try{
+
+                            String[] location = response.getString("location").split(",");
+                            String lat = location[0];
+                            String lng = location[1];
+
+                            LatLng driPos = new LatLng(Double.parseDouble(lat), Double.parseDouble(lng));
+                            try{
+
+                                driverMarker.remove();
+                            } catch (Exception e){
+                                e.printStackTrace();
+                            }
+
+                            driverMarker = mMap.addMarker(
+                                    new MarkerOptions()
+                                            .position(driPos)
+                                            .title("Driver Location")
+                                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.pin_car)));
+
+
+                        } catch (JSONException e){
+
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                }
+        );
+
+        RequestQueue queue = Volley.newRequestQueue(getActivity());
+        queue.add(jsonObjectRequest);
+
     }
 
-    private void drawRouteOnMap(JSONObject response){
 
-        try{
-
-            String restaurantAddress = response.getJSONObject("order").getJSONObject("registration").getString("address");
-            String orderAddress = response.getJSONObject("order").getString("address");
-
-            Geocoder coder = new Geocoder(getActivity());
-            ArrayList<Address> resAddresses = (ArrayList<Address>) coder.getFromLocationName(restaurantAddress, 1);
-            ArrayList<Address> ordAddresses = (ArrayList<Address>) coder.getFromLocationName(orderAddress, 1);
-
-            if (!resAddresses.isEmpty() && !ordAddresses.isEmpty()){
-
-                LatLng restaurantPos = new LatLng(resAddresses.get(0).getLatitude(), resAddresses.get(0).getLongitude());
-                LatLng orderPos = new LatLng(ordAddresses.get(0).getLatitude(), ordAddresses.get(0).getLongitude());
-
-                DrawRouteMaps.getInstance(getActivity(), "AIzaSyDqxXl466uV1ZlzMo7Z5RVmQJe--KL_D_o").draw(restaurantPos, orderPos, mMap);
-                DrawMarker.getInstance(getActivity()).draw(mMap, restaurantPos, R.drawable.pin_restaurant, "Restaurant Location");
-                DrawMarker.getInstance(getActivity()).draw(mMap, orderPos, R.drawable.pin_customer, "Customer Location");
-
-                LatLngBounds bounds = new LatLngBounds.Builder()
-                        .include(restaurantPos)
-                        .include(orderPos).build();
-                Point displaySize = new Point();
-                getActivity().getWindowManager().getDefaultDisplay().getSize(displaySize);
-                mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, displaySize.x, 250, 30));
-            }
-
-
-
-        } catch (JSONException | IOException e){
-
-            e.printStackTrace();
-        }
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        timer.cancel();
     }
 }
