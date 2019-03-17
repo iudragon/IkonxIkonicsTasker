@@ -192,7 +192,7 @@ public class OrderFragment extends Fragment implements OnMapReadyCallback {
             ArrayList<Address> resAddresses = (ArrayList<Address>) coder.getFromLocationName(restaurantAddress, 1);
             ArrayList<Address> ordAddresses = (ArrayList<Address>) coder.getFromLocationName(orderAddress, 1);
 
-            if (!resAddresses.isEmpty() && !ordAddresses.isEmpty()){
+            if (!resAddresses.isEmpty() && !ordAddresses.isEmpty()){    
 
                 LatLng restaurantPos = new LatLng(resAddresses.get(0).getLatitude(), resAddresses.get(0).getLongitude());
                 LatLng orderPos = new LatLng(ordAddresses.get(0).getLatitude(), ordAddresses.get(0).getLongitude());
