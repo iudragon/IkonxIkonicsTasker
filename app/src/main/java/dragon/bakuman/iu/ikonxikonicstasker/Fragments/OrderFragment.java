@@ -246,7 +246,7 @@ public class OrderFragment extends Fragment implements OnMapReadyCallback {
 
         SharedPreferences sharedPref = getActivity().getSharedPreferences("MY_KEY", Context.MODE_PRIVATE);
 
-        String url = getString(R.string.API_URL) + "/customer/driver/location?access_token=" + sharedPref.getString("token", "");
+        String url = getString(R.string.API_URL) + "/customer/driver/location/?access_token=" + sharedPref.getString("token", "");
 
 
 
