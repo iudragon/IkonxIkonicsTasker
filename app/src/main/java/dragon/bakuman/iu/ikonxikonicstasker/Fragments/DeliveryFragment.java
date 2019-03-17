@@ -2,6 +2,7 @@ package dragon.bakuman.iu.ikonxikonicstasker.Fragments;
 
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -15,11 +16,14 @@ import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -85,6 +89,7 @@ public class DeliveryFragment extends Fragment implements OnMapReadyCallback {
     private Marker driverMarker;
 
     private LocationCallback mLocationCallback;
+    private String orderId;
 
     public DeliveryFragment() {
         // Required empty public constructor
@@ -114,6 +119,7 @@ public class DeliveryFragment extends Fragment implements OnMapReadyCallback {
 
         getLatestOrder();
 
+        handleButtonCompleteOrder();
 
     }
 
@@ -133,7 +139,7 @@ public class DeliveryFragment extends Fragment implements OnMapReadyCallback {
                         Log.d("GET LATEST ORDER", response.toString());
 
                         JSONObject latestOrderJSONObject = null;
-                        String orderId = null;
+                        orderId = null;
                         Boolean orderIsDelivered = null;
 
 
@@ -424,6 +430,88 @@ public class DeliveryFragment extends Fragment implements OnMapReadyCallback {
 
         RequestQueue queue = Volley.newRequestQueue(getActivity());
         queue.add(postRequest);
+
+    }
+
+    private void handleButtonCompleteOrder(){
+
+        Button buttonCompleteOrder = getActivity().findViewById(R.id.button_complete_order);
+        buttonCompleteOrder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+                // Show an alert
+                AlertDialog.Builder builder = new AlertDialog.Builder((getActivity()));
+                builder.setTitle("Complete Order");
+                builder.setMessage("Is this order completed?");
+                builder.setPositiveButton("Cancel", null);
+                builder.setNegativeButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                        completeOrder(orderId);
+
+                    }
+                });
+
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();
+
+            }
+        });
+    }
+
+    private void completeOrder(final String orderId){
+
+
+
+        String url = getString(R.string.API_URL) + "/driver/order/complete/";
+
+        StringRequest postRequest = new StringRequest
+                (Request.Method.POST, url, new Response.Listener<String>() {
+
+                    @Override
+                    public void onResponse(String response) {
+
+
+                        Log.d("ORDER COMPLETED", response);
+                        FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+                        transaction.replace(R.id.content_frame, new OrderListFragment()).commit();
+
+                    }
+                }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                        Log.d("ERROR MESSAGE", error.toString());
+
+                    }
+                }) {
+
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+
+                final SharedPreferences sharedPref = getActivity().getSharedPreferences("MY_KEY", Context.MODE_PRIVATE);
+                Map<String, String> params = new HashMap<String, String>();
+
+                params.put("access_token", sharedPref.getString("token", ""));
+                params.put("order_id", orderId);
+
+
+                return params;
+
+            }
+        };
+
+        postRequest.setRetryPolicy(new DefaultRetryPolicy(0, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+
+
+        RequestQueue queue = Volley.newRequestQueue(getActivity());
+        queue.add(postRequest);
+
 
     }
 }
